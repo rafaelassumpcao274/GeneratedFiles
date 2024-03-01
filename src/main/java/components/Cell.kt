@@ -1,6 +1,7 @@
 package components
 
-class Cell<T>(val column: String,val row: Int?){
+open class Cell<T>(open val column: String, open val row: Int?){
+
     var style: Styles? = null
     var isMergedCells:Boolean = false
     var mergeCell: Pair<String, Int?>? = null
