@@ -1,26 +1,27 @@
 package components
 
-open class Cell<T>(open val column: String, open val row: Int?){
 
-    var style: Styles? = null
-    var isMergedCells:Boolean = false
+
+
+class Cell<T>(override val column: String, override val row: Int?) : ICell<T> {
+    override var style: Styles? = null
+    var isMergedCells: Boolean = false
     var mergeCell: Pair<String, Int?>? = null
-    var content: T? = null
-    var cellSize:Int? = null
-
+    override var content: T? = null
+    override var cellSize: Int? = null
 
     fun style(style: Styles): Cell<T> {
         this.style = style
         return this
     }
 
-    fun cellSize(cellSize:Int): Cell<T>{
+    fun cellSize(cellSize: Int): Cell<T> {
         this.cellSize = cellSize
         return this
     }
 
     fun mergeCell(finalColumn: String, finalRow: Int?): Cell<T> {
-        this.isMergedCells = true;
+        this.isMergedCells = true
         this.mergeCell = Pair(finalColumn, finalRow)
         return this
     }

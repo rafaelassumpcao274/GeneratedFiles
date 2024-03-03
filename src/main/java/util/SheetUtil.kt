@@ -12,7 +12,7 @@ import org.apache.poi.ss.usermodel.Cell as CellPoi
 
 class SheetUtil(var sheet: Sheet) {
 
-
+    private val utils:Utils = Utils()
     public fun createMergedCell(listCellMerge: List<String>) {
 
         if (listCellMerge.isEmpty() || !listCellMerge.contains("-")) {
@@ -225,34 +225,7 @@ class SheetUtil(var sheet: Sheet) {
     }
 
     fun transformColunmExcelInNumber(column: String): Int {
-        var alphabet: List<String> = listOf(
-            "A",
-            "B",
-            "C",
-            "D",
-            "E",
-            "F",
-            "G",
-            "H",
-            "I",
-            "J",
-            "K",
-            "L",
-            "M",
-            "N",
-            "O",
-            "P",
-            "Q",
-            "R",
-            "S",
-            "T",
-            "U",
-            "V",
-            "W",
-            "X",
-            "Y",
-            "Z"
-        );
+        var alphabet: List<String> = utils.alphabet
 
         var separateLetter: String = onlyLetter(column);
 
@@ -269,31 +242,6 @@ class SheetUtil(var sheet: Sheet) {
         return result;
     }
 
-    fun returnLetterByNumber(column: Int): String {
-        require(column > 0) { "Column number must be greater than zero" }
-
-        val alphabet: List<String> = listOf(
-            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
-            "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
-            "U", "V", "W", "X", "Y", "Z"
-        )
-
-        if (column <= alphabet.size) {
-            return alphabet[column - 1]
-        }
-
-        var result = ""
-        var n = column
-
-        while (n > 0) {
-            val remainder = (n - 1) % 26
-            val char = alphabet[remainder]
-            result = char + result
-            n = (n - 1) / 26
-        }
-
-        return result
-    }
 
     fun findValue(obj: Any, property: String): Any? {
         val properties = property.split('.')

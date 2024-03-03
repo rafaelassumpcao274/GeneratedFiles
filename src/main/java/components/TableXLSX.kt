@@ -1,78 +1,55 @@
 package components
 
+import exceptions.DefaultConfigExcelException
 import model.Table
+import org.apache.poi.ss.usermodel.Sheet
+import util.CellUtil
 import util.SheetUtil
 import util.Utils
 
-class TableXLSX<T>(val table:Table<T>) {
+class TableXLSX<T> (){
 
-    private lateinit var sheetUtil: SheetUtil
+    private lateinit var sheetUtil: SheetUtil;
     private  var util: Utils = Utils()
+    private  var cellUtils: CellUtil = CellUtil()
 
     private var listCell:List<Cell<*>> = listOfNotNull()
-    fun createTable(cell: Cell<T>): List<Cell<*>> {
+    fun  createTable(table: Table<T>): List<Cell<*>> {
+        require(table.nameColumnAndPathValue.size > 0){ throw RuntimeException("Name column and path not found !!!")}
 
-        var listHeaderCell:List<Cell<String>> = createListCell(cell,table.nameColumnAndPathValue.size);
+        val listHeaderCell = createListCell(table, table.nameColumnAndPathValue.size)
+        val listCell = mutableListOf<Cell<*>>()
 
-        var listCell:List<Cell<*>> = listOf();
+        for ((header, path) in table.nameColumnAndPathValue) {
+            val cellHeader = listHeaderCell.find { it.content == null } ?: continue
+            cellHeader.content = header
 
-        for (key in table.nameColumnAndPathValue.keys) {
-            listHeaderCell.filter { cell -> cell.content == null }
-                .first()
-                .content = key
-        }
+            listCell.add(cellHeader)
 
-        for (cellHeader in listHeaderCell) {
-            if (cellHeader.content.isNullOrEmpty()) {
-                continue
-            }
-            val path: String? = table.nameColumnAndPathValue[cellHeader.content]
-
-            listCell.addLast(cellHeader)
-            table.list.forEach { clss ->
-                val value = path?.let { findValue(clss, it) }
-
-                value?.let {
-                    listCell.addLast(
-                        Cell<T>(cellHeader.column, cellHeader.row?.plus(listHeaderCell.indexOf(cellHeader)))
-                            .content(it)
+            table.listContents?.forEachIndexed { index, clss ->
+                val valueType =  cellUtils.findValueWithType<T, Any>(clss, path)
+                valueType?.let {
+                    listCell.add(
+                        Cell<Any>(cellHeader.column, cellHeader.row?.plus(index+1))
+                            .content(it.first ?: "")
                     )
                 }
             }
         }
 
-       return listCell
-
-
-    }
-    fun <T> findValue(obj: T, property: String): T? {
-        val properties = property.split('.')
-        var currentValue: Any? = this
-
-        for (prop in properties) {
-            try {
-                val field = currentValue?.javaClass?.getDeclaredField(prop)
-                field?.isAccessible = true
-                currentValue = field?.get(currentValue)
-            } catch (e: NoSuchFieldException) {
-                // The property was not found
-                return null
-            }
-        }
-
-        return currentValue as T?
+        return listCell
     }
 
 
-    private fun createListCell(cell: Cell<T>, sizeColumnsTable: Int): List<Cell<String>> {
 
-        val columnIndex = util.alphabet().indexOf(cell.column)
+    private fun createListCell(cell: ICell<T>, sizeColumnsTable: Int): List<Cell<String>> {
+
+        var columnIndex = util.alphabet.indexOf(cell.column)
         val rowIndex = cell.row ?: 0;
 
         var listCell:List<Cell<String>> = listOfNotNull()
         for (i in 0..sizeColumnsTable) {
-
-            var colunm:String = sheetUtil.returnLetterByNumber(columnIndex+i)
+            var colunm:String = util.returnLetterByNumber(columnIndex++)
             var tempCell:Cell<String> = Cell(colunm,rowIndex)
 
             listCell.addLast(tempCell)

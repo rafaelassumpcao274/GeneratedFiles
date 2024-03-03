@@ -27,20 +27,22 @@ class Styles  {
     }
 
     /**
-     * Generate Cell with font and backgroud color in hexadecimal
+     * Generate Cell with font
      */
     fun font(font: Font):Styles {
         this.font = font
         return this
     }
     /**
-     * Generate font backgroud color in hexadecimal and currency format
+     * Generate Cell Format currency
      */
     fun currencyFormat(currencyFormat: CurrencyFormat):Styles {
         this.dataFormat = currencyFormat.value
         return this
     }
-
+    /**
+     * Generate Cell Format date
+     */
     fun dateFormat(dateFormat: DateFormat): Styles {
         this.dataFormat = dateFormat.value
         return this

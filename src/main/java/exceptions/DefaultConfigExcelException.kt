@@ -1,7 +1,7 @@
 package exceptions
 
 class DefaultConfigExcelException : Exception {
-    constructor() : super("Confi not accepted.")
+    constructor() : super("Config not accepted.")
 
     constructor(msg: String) : super(msg)
 
