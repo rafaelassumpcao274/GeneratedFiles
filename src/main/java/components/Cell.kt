@@ -1,6 +1,6 @@
 package components
 
-
+import model.ICell
 
 
 class Cell<T>(override val column: String, override val row: Int?) : ICell<T> {

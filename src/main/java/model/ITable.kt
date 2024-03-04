@@ -1,8 +1,8 @@
-package components
+package model
 
 import enums.TotalType
 
-interface ITable<T>:ICell<T> {
+interface ITable<T>: ICell<T> {
 
      var listContents:List<T>?
      /**
@@ -25,6 +25,8 @@ interface ITable<T>:ICell<T> {
       */
      var nameColumnAndPathValue:Map<String,String?>
      var totalColumns:Map<String, TotalType>?
+
+
 
 
 }

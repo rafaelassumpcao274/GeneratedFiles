@@ -217,11 +217,12 @@ class SheetUtil(var sheet: Sheet) {
     }
 
     private fun <T> createRow(cell: Cell<T>): Row {
+
         if (cell.row != null) {
-            return sheet.createRow(cell.row)
+            return sheet.getRow(cell.row) ?:  sheet.createRow(cell.row)
         }
 
-        return sheet.createRow(sheet.lastRowNum + 1)
+        return sheet.getRow(sheet.lastRowNum + 1) ?: sheet.createRow(sheet.lastRowNum + 1)
     }
 
     fun transformColunmExcelInNumber(column: String): Int {
@@ -243,22 +244,5 @@ class SheetUtil(var sheet: Sheet) {
     }
 
 
-    fun findValue(obj: Any, property: String): Any? {
-        val properties = property.split('.')
-        var currentValue: Any? = obj
-
-        for (prop in properties) {
-            try {
-                val field = currentValue?.javaClass?.getDeclaredField(prop)
-                field?.isAccessible = true
-                currentValue = field?.get(currentValue)
-            } catch (e: NoSuchFieldException) {
-                // The property was not found
-                return null
-            }
-        }
-
-        return currentValue
-    }
 
 }

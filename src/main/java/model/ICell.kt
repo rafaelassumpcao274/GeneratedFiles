@@ -1,4 +1,6 @@
-package components
+package model
+
+import components.Styles
 
 interface ICell<T> {
 

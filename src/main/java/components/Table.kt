@@ -1,13 +1,10 @@
-package model
+package components
 
-import components.Cell
-import components.ICell
-import components.ITable
-import components.Styles
 import enums.TotalType
+import model.ITable
 
 
- class Table<T>: ITable<T> {
+class Table<T>: ITable<T> {
 
      override var cellSize: Int? = null
      override var style: Styles? = null
@@ -31,7 +28,7 @@ import enums.TotalType
      }
 
 
-     fun nameColumnAndPathValue(nameColumnAndPathValue:Map<String,String?>):Table<T>{
+     fun nameColumnAndPathValue(nameColumnAndPathValue:Map<String,String?>): Table<T> {
          this.nameColumnAndPathValue = nameColumnAndPathValue
          return this
      }
