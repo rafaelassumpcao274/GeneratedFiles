@@ -1,5 +1,6 @@
 package components
 
+import enums.BorderCell
 import enums.TotalType
 import model.ITable
 
@@ -7,7 +8,7 @@ import model.ITable
 class Table<T>: ITable<T> {
 
      override var cellSize: Int? = null
-     override var style: Styles? = null
+     override var style: Styles? = Styles().borderCell(BorderCell.ALL)
      override var listContents: List<T>? = null
      override var content:T? = null
      override var column: String = ""
