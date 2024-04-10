@@ -166,7 +166,7 @@ class SheetUtil(var sheet: Sheet) {
         verifyTypeAccept(cell, cellPoi);
         cell.style?.let {
             val styleService = StyleService(sheet.workbook)
-            val style = styleService.createStyle(it)
+            var style = styleService.createStyle(it)
             cellPoi.cellStyle = style
         }
 

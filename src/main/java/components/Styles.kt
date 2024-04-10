@@ -23,7 +23,6 @@ class Styles : IStyle {
     override var borderCell: BorderCell? = null
     override var alignmentContent: Alignment = Alignment.LEFT;
 
-    constructor()
 
 
     /**

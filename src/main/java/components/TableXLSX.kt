@@ -24,7 +24,7 @@ class TableXLSX<T>() {
 
             table.listContents?.forEachIndexed { index, clss ->
                 val valueType = cellUtils.findValueWithType<T, Any>(clss, path)
-                valueType?.let {
+                valueType.let {
                     listCell.add(
                         Cell<Any>(cellHeader.column, cellHeader.row?.plus(index + 1))
                             .content(it.first ?: "")
