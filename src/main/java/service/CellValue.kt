@@ -17,6 +17,7 @@ class CellValue(val cell: Cell){
             is Double -> operationsForDouble(value)
             is String -> operationsForString(value)
             is Date -> operationsForDate(value)
+            is Int -> operationsForInt(value)
             else -> operationsForString(value.toString())
             // Add more conditions as needed for other accepted types
         }
@@ -44,6 +45,10 @@ class CellValue(val cell: Cell){
 
     private fun operationsForDate(value: Date) {
         cell.setCellValue(value)
+    }
+
+    private fun operationsForInt(value: Int) {
+        cell.setCellValue(value.toDouble())
     }
 }
 

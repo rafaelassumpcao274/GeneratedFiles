@@ -9,5 +9,7 @@ interface ICell<T> {
      var content: T?
      var cellSize:Int?
      var style: Styles?
+     var isMergedCells: Boolean
+     var mergeCell: Pair<String, Int?>?
 
 }

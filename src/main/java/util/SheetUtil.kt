@@ -1,7 +1,9 @@
 package util
 
-import components.Cell
+import components.BasicCell
 import exceptions.DefaultConfigExcelException
+import model.ICell
+import model.IFormulaCell
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.util.CellRangeAddress
@@ -157,58 +159,104 @@ class SheetUtil(var sheet: Sheet) {
 //        return fontMetrics.charWidth(letra);
 //    }
 
-    fun <T> createColumnRow(cell: Cell<T>) {
+    fun <T> createColumnRow(basicCell: BasicCell<T>) {
 
-        var row: Row = createRow(cell)
+        var row: Row = createRow(basicCell)
 
-        var cellPoi: CellPoi = row.createCell(transformColunmExcelInNumber(cell.column))
+        var cellPoi: CellPoi = row.createCell(transformColunmExcelInNumber(basicCell.column))
 
-        verifyTypeAccept(cell, cellPoi);
-        cell.style?.let {
+        insertDataInCell(basicCell,cellPoi)
+    }
+
+    fun <T> createColumnRow(basicCell: ICell<T>) {
+
+        var row: Row = createRow(basicCell)
+
+        var cellPoi: CellPoi = row.createCell(transformColunmExcelInNumber(basicCell.column))
+
+        insertDataInCell(basicCell,cellPoi)
+    }
+
+    private fun <T> insertDataInCell(basicCell: ICell<T>, cellPoi:CellPoi){
+
+        verifyTypeAccept(basicCell, cellPoi);
+        basicCell.style?.let {
             val styleService = StyleService(sheet.workbook)
             var style = styleService.createStyle(it)
             cellPoi.cellStyle = style
         }
 
-        cell.cellSize.let { sheet.autoSizeColumn(cellPoi.columnIndex) }
+//        basicCell.cellSize.let { sheet.autoSizeColumn(cellPoi.columnIndex) }
+
+        verifyFormulaCell(basicCell,cellPoi)
+
+
+    }
+    private fun <T> insertDataInCell(basicCell: BasicCell<T>, cellPoi:CellPoi){
+
+        verifyTypeAccept(basicCell, cellPoi);
+        basicCell.style?.let {
+            val styleService = StyleService(sheet.workbook)
+            var style = styleService.createStyle(it)
+            cellPoi.cellStyle = style
+        }
+
+        basicCell.cellSize.let { sheet.autoSizeColumn(cellPoi.columnIndex) }
+
+        verifyFormulaCell(basicCell,cellPoi)
 
 
     }
 
-    private fun <T> verifyTypeAccept(cell: Cell<T>, cellPoi: CellPoi) {
+    private fun <T> verifyFormulaCell(cell: ICell<T>, cellPoi: CellPoi) {
+        if (cell is IFormulaCell && cell.formula == true) {
+            // Se a célula for uma instância de IFormulaCell e a flag formula for true
+            cellPoi.cellFormula = cell.content
+            sheet.workbook.creationHelper.createFormulaEvaluator().evaluateFormulaCell(cellPoi)
+        }
+    }
+
+    private fun <T> verifyTypeAccept(basicCell: BasicCell<T>, cellPoi: CellPoi) {
         var cellValue: CellValue = CellValue(cellPoi)
-        cell.content?.let { cellValue.setCellValue(it) }
+        basicCell.content?.let { cellValue.setCellValue(it) }
 
     }
 
-    fun <T> createMergedColumnRow(cell: Cell<T>) {
+    private fun <T> verifyTypeAccept(basicCell: ICell<T>, cellPoi: CellPoi) {
+        var cellValue: CellValue = CellValue(cellPoi)
+        basicCell.content?.let { cellValue.setCellValue(it) }
+
+    }
+
+    //TODO refatorar pois poderia criar as celula individualmente
+    fun <T> createMergedColumnRow(basicCell: BasicCell<T>) {
 
 
-        var row: Row = createRow(cell)
+        var row: Row = createRow(basicCell)
 
-        var cellPoi: CellPoi = row.createCell(transformColunmExcelInNumber(cell.column))
-        verifyTypeAccept(cell, cellPoi);
+        var cellPoi: CellPoi = row.createCell(transformColunmExcelInNumber(basicCell.column))
+        verifyTypeAccept(basicCell, cellPoi);
 
-        cell.mergeCell.let { merge ->
+        basicCell.mergeCell.let { merge ->
 
             merge?.let {
 
-                var mergedCell = Cell<T>(it.first, it.second)
+                var mergedBasicCell = BasicCell<T>(it.first, it.second)
 
-                cell.content?.let {mergedCell.content(it)}
+                basicCell.content?.let {mergedBasicCell.content(it)}
 
-                var anotherRow = this.createRow(mergedCell)
+                var anotherRow = this.createRow(mergedBasicCell)
 
-                var cellPoiAnother: CellPoi = anotherRow.createCell(transformColunmExcelInNumber(cell.column))
+                var cellPoiAnother: CellPoi = anotherRow.createCell(transformColunmExcelInNumber(basicCell.column))
 
-                verifyTypeAccept(cell, cellPoiAnother);
+                verifyTypeAccept(basicCell, cellPoiAnother);
 
                 sheet.addMergedRegion(
                     CellRangeAddress(
                         row.rowNum,
                         anotherRow.rowNum,
-                        transformColunmExcelInNumber(cell.column),
-                        transformColunmExcelInNumber(mergedCell.column)
+                        transformColunmExcelInNumber(basicCell.column),
+                        transformColunmExcelInNumber(mergedBasicCell.column)
                     )
                 )
             }
@@ -216,15 +264,70 @@ class SheetUtil(var sheet: Sheet) {
 
     }
 
-    private fun <T> createRow(cell: Cell<T>): Row {
+    fun <T> createMergedColumnRow(basicCell: ICell<T>) {
 
-        if (cell.row != null) {
-            return sheet.getRow(cell.row) ?:  sheet.createRow(cell.row)
+
+        var row: Row = createRow(basicCell)
+
+        var cellPoi: CellPoi = row.createCell(transformColunmExcelInNumber(basicCell.column))
+        verifyTypeAccept(basicCell, cellPoi);
+
+        basicCell.mergeCell.let { merge ->
+
+            merge?.let {
+
+                var mergedBasicCell = BasicCell<T>(it.first, it.second)
+
+                basicCell.content?.let {mergedBasicCell.content(it)}
+
+                var anotherRow = this.createRow(mergedBasicCell)
+
+                var cellPoiAnother: CellPoi = anotherRow.createCell(transformColunmExcelInNumber(basicCell.column))
+
+                verifyTypeAccept(basicCell, cellPoiAnother);
+
+                sheet.addMergedRegion(
+                    CellRangeAddress(
+                        row.rowNum,
+                        anotherRow.rowNum,
+                        transformColunmExcelInNumber(basicCell.column),
+                        transformColunmExcelInNumber(mergedBasicCell.column)
+                    )
+                )
+            }
+        }
+
+    }
+
+    private fun <T> createRow(basicCell: BasicCell<T>): Row {
+
+        if (basicCell.row != null) {
+
+            if(basicCell.row.equals(0) || basicCell.row < 0 ){
+
+                return sheet.getRow(0) ?:  sheet.createRow(0)
+            }
+
+            return sheet.getRow(basicCell.row - 1) ?:  sheet.createRow(basicCell.row -1)
         }
 
         return sheet.getRow(sheet.lastRowNum + 1) ?: sheet.createRow(sheet.lastRowNum + 1)
     }
 
+    private fun <T> createRow(basicCell: ICell<T>): Row {
+
+        if (basicCell.row != null) {
+
+            if(basicCell.row!!.equals(0)){
+
+                return sheet.getRow(basicCell.row!!) ?:  sheet.createRow(basicCell.row!!)
+            }
+
+            return sheet.getRow(basicCell.row!! - 1) ?:  sheet.createRow(basicCell.row!! -1)
+        }
+
+        return sheet.getRow(sheet.lastRowNum + 1) ?: sheet.createRow(sheet.lastRowNum + 1)
+    }
     fun transformColunmExcelInNumber(column: String): Int {
         var alphabet: List<String> = utils.alphabet
 

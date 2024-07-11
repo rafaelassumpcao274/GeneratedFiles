@@ -1,8 +1,8 @@
 package repository
 
-import components.Cell
+import components.BasicCell
 import model.CellSheet
-import java.util.*
+import model.ICell
 
 
 interface ReportXLSXRepository {
@@ -13,7 +13,8 @@ interface ReportXLSXRepository {
     fun begin()
 
     fun <T> sheet(cellSheet: CellSheet<T>)
-    fun  sheet(cellSheet: List<Cell<*>>)
+    fun sheet(nameSheet: String,listCell: List<ICell<*>>)
+    fun  sheet(listCell: List<ICell<*>>)
 
     fun <T> sheet(nameSheet:String,cellSheet: CellSheet<T>)
     fun end()

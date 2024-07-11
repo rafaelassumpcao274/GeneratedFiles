@@ -1,17 +1,17 @@
 package model
 
-import components.Cell
+import components.BasicCell
 
  class CellSheet<T>{
-     var  listCell:List<Cell<*>> = listOfNotNull()
+     var  listBasicCell:List<BasicCell<*>> = listOfNotNull()
 
 
-     fun add(cell:Cell<T>){
-         listCell.addLast(cell)
+     fun add(basicCell:BasicCell<T>){
+         listBasicCell.addLast(basicCell)
      }
 
-     fun addAll(listCell:List<Cell<T>>){
-         for (cell in listCell) {
+     fun addAll(listBasicCell:List<BasicCell<T>>){
+         for (cell in listBasicCell) {
              add(cell)
          }
      }

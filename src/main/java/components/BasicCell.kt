@@ -3,30 +3,30 @@ package components
 import model.ICell
 
 
-class Cell<T>(override val column: String, override val row: Int?) : ICell<T> {
+class BasicCell<T>(override val column: String, override val row: Int?) : ICell<T> {
     override var style: Styles? = null
-    var isMergedCells: Boolean = false
-    var mergeCell: Pair<String, Int?>? = null
+    override var isMergedCells: Boolean = false
+    override var mergeCell: Pair<String, Int?>? = null
     override var content: T? = null
     override var cellSize: Int? = null
 
-    fun style(style: Styles): Cell<T> {
+    fun style(style: Styles): BasicCell<T> {
         this.style = style
         return this
     }
 
-    fun cellSize(cellSize: Int): Cell<T> {
+    fun cellSize(cellSize: Int): BasicCell<T> {
         this.cellSize = cellSize
         return this
     }
 
-    fun mergeCell(finalColumn: String, finalRow: Int?): Cell<T> {
+    fun mergeCell(finalColumn: String, finalRow: Int?): BasicCell<T> {
         this.isMergedCells = true
         this.mergeCell = Pair(finalColumn, finalRow)
         return this
     }
 
-    fun content(content: T): Cell<T> {
+    fun content(content: T): BasicCell<T> {
         this.content = content
         return this
     }

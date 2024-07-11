@@ -9,7 +9,7 @@ enum class TotalType {
     /**
      * Avereage all values
      */
-    AVG,
+    AVERAGE,
 
     /**
      * weighted average all values

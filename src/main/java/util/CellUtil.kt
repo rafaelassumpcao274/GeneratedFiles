@@ -45,7 +45,12 @@ class CellUtil {
             }
         }
 
-        return Pair(currentValue as O?, currentValue!!::class.java)
+        if(currentValue != null){
+
+            return Pair(currentValue as O?, currentValue!!::class.java)
+        }
+        return  Pair(" " as O?,String::class.java)
+
     }
 
 }

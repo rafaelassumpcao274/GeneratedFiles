@@ -36,7 +36,7 @@ class Utils {
 //        require(column <1) { "Column number must be greater than zero" }
 
         if (column < alphabet.size) {
-            return alphabet[column]
+            return alphabet.get(column)
         }
 
         var result = ""
@@ -44,7 +44,7 @@ class Utils {
 
         while (n > 0) {
             val remainder = (n - 1) % 26
-            val char = alphabet[remainder]
+            val char = alphabet.get(remainder)
             result = char + result
             n = (n - 1) / 26
         }

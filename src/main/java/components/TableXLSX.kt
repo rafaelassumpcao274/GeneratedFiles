@@ -10,49 +10,74 @@ class TableXLSX<T>() {
     private var util: Utils = Utils()
     private var cellUtils: CellUtil = CellUtil()
 
-    fun createTable(table: Table<T>): List<Cell<*>> {
+    fun createTable(table: Table<T>): List<ICell<*>> {
         require(table.nameColumnAndPathValue.size > 0) { throw RuntimeException("Name column and path not found !!!") }
 
         val listHeaderCell = createListCell(table, table.nameColumnAndPathValue.size)
-        val listCell = mutableListOf<Cell<*>>()
+        var columnActual = table.column
+        val row = table.row ?: 1
+        val listBasicCell = mutableListOf<ICell<*>>()
 
         for ((header, path) in table.nameColumnAndPathValue) {
-            val cellHeader = listHeaderCell.find { it.content == null } ?: continue
-            cellHeader.content = header
-
-            listCell.add(cellHeader)
+            val cellHeader = createCellHeader(columnActual,row,header)
+            listBasicCell.add(cellHeader)
 
             table.listContents?.forEachIndexed { index, clss ->
                 val valueType = cellUtils.findValueWithType<T, Any>(clss, path)
                 valueType.let {
-                    listCell.add(
-                        Cell<Any>(cellHeader.column, cellHeader.row?.plus(index + 1))
+
+                    var rowActual = row + index
+                    if(index < 1){
+                        rowActual = row + index + 1
+                    }
+
+                    listBasicCell.add(
+                        BasicCell<Any>(cellHeader.column, rowActual)
                             .content(it.first ?: "")
                             .style(table.style ?: Styles())
                     )
                 }
             }
+
+            if(table.totalColumns != null && table.totalColumns!!.containsKey(header)){
+
+                var last = listBasicCell.last()
+                var formula:String = (table.totalColumns!!.get(header)?.name ?: "SUM") +"("+cellHeader.column+(cellHeader.row?.plus(1))+":"+ last.column+last.row+")"
+                listBasicCell.add(FormulaCell(cellHeader.column,last.row?.plus(1)).content(formula))
+            }
+            columnActual = nextColumn(columnActual)
         }
 
-        return listCell
+        return listBasicCell
+    }
+
+    private fun createCellHeader(columnActual: String, row: Int, header: String): ICell<*> {
+        return  BasicCell<String>(columnActual,row)
+            .content(header)
+            .style(Styles())
+    }
+
+    private fun nextColumn(columnActual: String): String{
+        return util.returnLetterByNumber(util.alphabet.indexOf(columnActual) + 1)
     }
 
 
-    private fun createListCell(cell: ICell<T>, sizeColumnsTable: Int): List<Cell<String>> {
+    private fun createListCell(cell: ICell<T>, sizeColumnsTable: Int): List<BasicCell<String>> {
 
         var columnIndex = util.alphabet.indexOf(cell.column)
-        val rowIndex = cell.row ?: 0;
+        val rowIndex = cell.row ?: 1;
 
-        var listCell: List<Cell<String>> = listOfNotNull()
+        var listBasicCell: ArrayList<BasicCell<String>> = ArrayList()
         for (i in 0..sizeColumnsTable) {
             var colunm: String = util.returnLetterByNumber(columnIndex++)
-            var tempCell: Cell<String> = Cell<String>(colunm, rowIndex)
+            var tempBasicCell: BasicCell<String> = BasicCell<String>(colunm, rowIndex)
+                .content(cell.content.toString())
                 .style(cell.style ?: Styles())
 
-            listCell.addLast(tempCell)
+            listBasicCell.add(tempBasicCell)
         }
 
-        return listCell
+        return listBasicCell
     }
 
 

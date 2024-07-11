@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="GeneratedFiles:jar">
+  <artifact type="jar" build-on-make="true" name="GeneratedFiles:jar">
     <output-path>$PROJECT_DIR$/../testeGenereted/lib</output-path>
     <root id="archive" name="GeneratedFiles.jar">
       <element id="module-output" name="GeneratedFiles" />

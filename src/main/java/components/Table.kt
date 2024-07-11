@@ -13,6 +13,8 @@ class Table<T>(initialColumn: String, initialRow: Int?, listContents: List<T>) :
      override var content:T? = null
      override var column: String = initialColumn
      override var row: Int? = initialRow
+     override var isMergedCells: Boolean = false
+     override var mergeCell: Pair<String, Int?>? = null
 
      override var nameColumnAndPathValue:Map<String,String?> = hashMapOf()
      override var totalColumns:Map<String,TotalType>? = null
@@ -28,4 +30,10 @@ class Table<T>(initialColumn: String, initialRow: Int?, listContents: List<T>) :
          return this
      }
 
- }
+    fun totalColumns(totalColumns:Map<String,TotalType>): Table<T> {
+        this.totalColumns = totalColumns
+        return this
+    }
+
+
+}
