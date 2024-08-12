@@ -24,8 +24,8 @@ class NameUtil {
     }
 
     private fun formatNameFile(fileName:String,type:Types): String{
-        if(fileName.contains(".")){
-            val dotIndex = fileName.lastIndexOf('.')
+        if(fileName.contains(dot)){
+            val dotIndex = fileName.lastIndexOf(dot)
             if (dotIndex != -1) {
                 return (fileName.substring(0, dotIndex) )+dot+type.value
             }
