@@ -6,9 +6,9 @@ import exceptions.NameFileException
 class NameUtil {
 
 
-    val dot:Char = '.'
+    private val dot:Char = '.'
 
-    var stringUtil: StringUtil = StringUtil()
+    private var stringUtil: StringUtil = StringUtil()
     fun nameType(fileName:String,type:Types) :String{
 
         if(stringUtil.validIsEmptyOrNull(fileName)){
