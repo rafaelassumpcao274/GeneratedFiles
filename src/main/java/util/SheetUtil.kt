@@ -314,6 +314,10 @@ class SheetUtil(var sheet: Sheet) {
         return sheet.getRow(sheet.lastRowNum + 1) ?: sheet.createRow(sheet.lastRowNum + 1)
     }
 
+    public fun  cellSize(column: String){
+            sheet.autoSizeColumn(transformColunmExcelInNumber(column))
+    }
+
     private fun <T> createRow(basicCell: ICell<T>): Row {
 
         if (basicCell.row != null) {

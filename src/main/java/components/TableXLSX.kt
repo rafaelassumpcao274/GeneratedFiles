@@ -13,7 +13,7 @@ class TableXLSX<T>() {
     fun createTable(table: Table<T>): List<ICell<*>> {
         require(table.nameColumnAndPathValue.size > 0) { throw RuntimeException("Name column and path not found !!!") }
 
-        val listHeaderCell = createListCell(table, table.nameColumnAndPathValue.size)
+        createListCell(table, table.nameColumnAndPathValue.size)
         var columnActual = table.column
         val row = table.row ?: 1
         val listBasicCell = mutableListOf<ICell<*>>()
@@ -62,7 +62,7 @@ class TableXLSX<T>() {
     }
 
 
-    private fun createListCell(cell: ICell<T>, sizeColumnsTable: Int): List<BasicCell<String>> {
+    private fun createListCell(cell: ICell<T>, sizeColumnsTable: Int) {
 
         var columnIndex = util.alphabet.indexOf(cell.column)
         val rowIndex = cell.row ?: 1;
@@ -77,7 +77,6 @@ class TableXLSX<T>() {
             listBasicCell.add(tempBasicCell)
         }
 
-        return listBasicCell
     }
 
 

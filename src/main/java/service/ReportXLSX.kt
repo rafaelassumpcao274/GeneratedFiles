@@ -22,6 +22,7 @@ open class ReportXLSX() : ReportXLSXRepository {
 
     protected lateinit var workbook: Workbook;
 
+    private val startTime = System.nanoTime()
 
     private var nameUtil: NameUtil = NameUtil();
 
@@ -69,6 +70,14 @@ open class ReportXLSX() : ReportXLSXRepository {
                 }
         }
 
+        listCell
+            .filter { cell -> cell.cellSize == null }
+            .map { cell -> cell.column }
+            .toSet()
+            .forEach{
+            sheetUtil.cellSize(it)
+        }
+
     }
 
 
@@ -108,7 +117,9 @@ open class ReportXLSX() : ReportXLSXRepository {
         try {
             var fileOut = FileOutputStream(nameFile);
             workbook.write(fileOut)
+            val endTime = System.nanoTime()
 
+            println( "It took "+(endTime - startTime) / 1_000_000 +" ms to generate the ${nameFile}")
         } catch (e: IOException) {
             e.printStackTrace()
         }
