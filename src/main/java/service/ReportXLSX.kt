@@ -17,7 +17,7 @@ import java.io.IOException
 import java.util.*
 
 
-open class ReportXLSX() : ReportXLSXRepository {
+open class ReportXLSX() : ReportXLSXRepository,AutoCloseable {
 
 
     protected lateinit var workbook: Workbook;
@@ -113,7 +113,7 @@ open class ReportXLSX() : ReportXLSXRepository {
     }
 
 
-    override fun end() {
+    override fun close() {
         try {
             var fileOut = FileOutputStream(nameFile);
             workbook.write(fileOut)
@@ -126,33 +126,5 @@ open class ReportXLSX() : ReportXLSXRepository {
 
     }
 
-    fun <T> splitListIntoChunks(list: List<T>, chunkSize: Int): Map<Int, List<T>> {
-        val chunks = mutableMapOf<Int, MutableList<T>>()
-
-        var chunkIndex = 0
-
-        var listData: MutableList<T> = mutableListOf()
-
-
-        if (list.size <= chunkSize) {
-            chunks.put(0, list.toMutableList())
-            return chunks.toMap()
-        }
-
-        for (item in list) {
-
-            if (listData.size <= chunkSize) {
-                listData.add(item)
-            } else {
-                chunks.put(chunkIndex, listData)
-                listData = mutableListOf(item)
-
-                chunkIndex++
-            }
-
-        }
-
-        return chunks.toMap()
-    }
 
 }

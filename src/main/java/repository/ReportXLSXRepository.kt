@@ -17,6 +17,6 @@ interface ReportXLSXRepository {
     fun  sheet(listCell: List<ICell<*>>)
 
     fun <T> sheet(nameSheet:String,cellSheet: CellSheet<T>)
-    fun end()
+    fun close()
 
 }

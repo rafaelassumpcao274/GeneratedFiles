@@ -1,15 +1,75 @@
 package components
 
+import enums.BorderCell
+import enums.TotalType
 import model.ICell
+import model.ITable
 import util.CellUtil
 import util.Utils
 
-class TableXLSX<T>() {
+class TableXLSX<T>(
+    override var column: String,
+    override var row: Int?,
+    override var listContents: List<T>?,
+    nameColumnAndPathValue: Map<String,String?>
+): ITable<T> {
 
+    override var cellSize: Int? = null
+    override var style: Styles? = Styles().borderCell(BorderCell.ALL)
+    override var content:T? = null
+    override var isMergedCells: Boolean = false
+    override var mergeCell: Pair<String, Int?>? = null
+
+    override var nameColumnAndPathValue:Map<String,String?> = hashMapOf()
+    override var totalColumns:Map<String,TotalType>? = null
+
+    init {
+        createTable();
+    }
 
     private var util: Utils = Utils()
     private var cellUtils: CellUtil = CellUtil()
 
+    private fun createTable(): List<ICell<*>> {
+        require(this.nameColumnAndPathValue.size > 0) { throw RuntimeException("Name column and path not found !!!") }
+
+        createListCell(this, this.nameColumnAndPathValue.size)
+        var columnActual = this.column
+        val row = this.row ?: 1
+        val listBasicCell = mutableListOf<ICell<*>>()
+
+        for ((header, path) in this.nameColumnAndPathValue) {
+            val cellHeader = createCellHeader(columnActual,row,header)
+            listBasicCell.add(cellHeader)
+
+            this.listContents?.forEachIndexed { index, clss ->
+                val valueType = cellUtils.findValueWithType<T, Any>(clss, path)
+                valueType.let {
+
+                    var rowActual = row + index
+                    if(index < 1){
+                        rowActual = row + index + 1
+                    }
+
+                    listBasicCell.add(
+                        BasicCell<Any>(cellHeader.column, rowActual)
+                            .content(it.first ?: "")
+                            .style(this.style ?: Styles())
+                    )
+                }
+            }
+
+            if(this.totalColumns != null && this.totalColumns!!.containsKey(header)){
+
+                var last = listBasicCell.last()
+                var formula:String = (this.totalColumns!!.get(header)?.name ?: "SUM") +"("+cellHeader.column+(cellHeader.row?.plus(1))+":"+ last.column+last.row+")"
+                listBasicCell.add(FormulaCell(cellHeader.column,last.row?.plus(1)).content(formula))
+            }
+            columnActual = nextColumn(columnActual)
+        }
+
+        return listBasicCell
+    }
     fun createTable(table: Table<T>): List<ICell<*>> {
         require(table.nameColumnAndPathValue.size > 0) { throw RuntimeException("Name column and path not found !!!") }
 
